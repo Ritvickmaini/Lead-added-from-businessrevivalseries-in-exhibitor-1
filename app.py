@@ -43,17 +43,42 @@ def parse_details(body):
     text = re.sub(r"</?(p|div|tr|td|li)[^>]*>", "\n", text, flags=re.I)
     text = re.sub(r"<[^>]+>", "", text)
 
-    # Replace HTML entities and strip
+    # Clean HTML entities and whitespace
     text = re.sub(r"&[a-z]+;", " ", text)
-    
-    # Split into lines and clean
     lines = [clean_text(l) for l in text.split("\n") if clean_text(l)]
 
-    # Skip the first line if it's the generic header
+    # ------------------------------
+    # 📌 FORMAT 2: Media Pack enquiry
+    # ------------------------------
+    if lines and "submitted enquiry for Media Pack" in lines[0]:
+        # Format:
+        # 1: Name
+        # 2: Email
+        # 3: Company
+        # 4: Show
+        # 5: Mobile
+        # 6: Website (ignored)
+        name_parts = lines[1].split()
+        first_name = name_parts[0]
+        last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else ""
+
+        return {
+            "First Name": first_name,
+            "Last Name": last_name,
+            "Email": lines[2] if len(lines) > 2 else "",
+            "Business Name": lines[3] if len(lines) > 3 else "",
+            "Which event are you interested in": lines[4] if len(lines) > 4 else "",
+            "Mobile Number": lines[5] if len(lines) > 5 else "",
+            "LinkedIn Profile Link": "",
+            "Business linkedln page or Website": ""
+        }
+
+    # ------------------------------
+    # 📌 FORMAT 1: Normal booking enquiry
+    # ------------------------------
     if lines and "would like to book a stand" in lines[0].lower():
         lines = lines[1:]
 
-    # Map lines to fields (based on observed email format)
     first_name, last_name = ("", "")
     if len(lines) >= 1:
         name_parts = lines[0].split()
@@ -74,7 +99,7 @@ def parse_details(body):
 # ----------------- DUPLICATE CHECK -----------------
 def get_existing_emails():
     try:
-        all_emails = sheet.col_values(7)  # "Email" column index (7th)
+        all_emails = sheet.col_values(7)  # Email column
         return set([e.lower().strip() for e in all_emails if e])
     except Exception as e:
         print(f"❌ Error fetching existing emails: {e}")
@@ -90,7 +115,7 @@ def fetch_emails():
     email_ids = messages[0].split()
     leads = []
 
-    for eid in email_ids[-50:]:  # last 50 emails
+    for eid in email_ids[-50:]:  # last 50 only
         _, msg_data = mail.fetch(eid, "(RFC822)")
         raw_msg = msg_data[0][1]
         msg = email.message_from_bytes(raw_msg)
@@ -147,7 +172,7 @@ def process_emails(leads):
             details["Which event are you interested in"], # Show
             "", "", "", "", "", "",                # Next Followup → Pitch Deck URL
             "Exhibitors_opportunity",              # Interested for
-            "",                                   # Follow-Up Count (start at 0)
+            "",                                    # Follow-Up Count
             "", "", "", "", "", "", "", "", "", "", "", "", "", ""
         ]
 
@@ -161,7 +186,7 @@ def process_emails(leads):
     else:
         print("ℹ️ No new leads to add")
 
-# ----------------- RUN -----------------
+# ----------------- RUN LOOP -----------------
 if __name__ == "__main__":
     while True:
         print(f"⏱ Running email fetch at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
