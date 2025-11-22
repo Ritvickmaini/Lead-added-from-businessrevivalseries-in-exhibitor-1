@@ -47,17 +47,37 @@ def parse_details(body):
     text = re.sub(r"&[a-z]+;", " ", text)
     lines = [clean_text(l) for l in text.split("\n") if clean_text(l)]
 
-    # ------------------------------
+    # ============================================================
+    # 📌 FORMAT 3: Floor Plan enquiry
+    # ============================================================
+    # Example:
+    # The following person have submitted enquiry for Floor Plan:
+    # Name
+    # Email
+    # Business
+    # Show
+    # Mobile
+    # Website
+    if lines and "submitted enquiry for Floor Plan" in lines[0]:
+        name_parts = lines[1].split()
+        first_name = name_parts[0]
+        last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else ""
+
+        return {
+            "First Name": first_name,
+            "Last Name": last_name,
+            "Email": lines[2] if len(lines) > 2 else "",
+            "Business Name": lines[3] if len(lines) > 3 else "",
+            "Which event are you interested in": lines[4] if len(lines) > 4 else "",
+            "Mobile Number": lines[5] if len(lines) > 5 else "",
+            "LinkedIn Profile Link": "",
+            "Business linkedln page or Website": lines[6] if len(lines) > 6 else ""
+        }
+
+    # ============================================================
     # 📌 FORMAT 2: Media Pack enquiry
-    # ------------------------------
+    # ============================================================
     if lines and "submitted enquiry for Media Pack" in lines[0]:
-        # Format:
-        # 1: Name
-        # 2: Email
-        # 3: Company
-        # 4: Show
-        # 5: Mobile
-        # 6: Website (ignored)
         name_parts = lines[1].split()
         first_name = name_parts[0]
         last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else ""
@@ -73,9 +93,9 @@ def parse_details(body):
             "Business linkedln page or Website": ""
         }
 
-    # ------------------------------
+    # ============================================================
     # 📌 FORMAT 1: Normal booking enquiry
-    # ------------------------------
+    # ============================================================
     if lines and "would like to book a stand" in lines[0].lower():
         lines = lines[1:]
 
@@ -170,7 +190,7 @@ def process_emails(leads):
             details["Mobile Number"],              # Mobile
             email_value,                           # Email
             details["Which event are you interested in"], # Show
-            "", "", "", "", "", "",                # Next Followup → Pitch Deck URL
+            "", "", "", "", "", "",                
             "Exhibitors_opportunity",              # Interested for
             "",                                    # Follow-Up Count
             "", "", "", "", "", "", "", "", "", "", "", "", "", ""
