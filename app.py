@@ -48,17 +48,16 @@ def parse_details(body):
     lines = [clean_text(l) for l in text.split("\n") if clean_text(l)]
 
     # ============================================================
-    # 📌 FORMAT 3: Floor Plan enquiry
+    # 📌 FORMAT 3 – Floor Plan enquiry (NEW)
     # ============================================================
-    # Example:
-    # The following person have submitted enquiry for Floor Plan:
-    # Name
-    # Email
-    # Business
-    # Show
-    # Mobile
-    # Website
     if lines and "submitted enquiry for Floor Plan" in lines[0]:
+        # Expected:
+        # 1: Name
+        # 2: Email
+        # 3: Company
+        # 4: Show
+        # 5: Mobile
+        # 6: Website
         name_parts = lines[1].split()
         first_name = name_parts[0]
         last_name = " ".join(name_parts[1:]) if len(name_parts) > 1 else ""
@@ -71,11 +70,11 @@ def parse_details(body):
             "Which event are you interested in": lines[4] if len(lines) > 4 else "",
             "Mobile Number": lines[5] if len(lines) > 5 else "",
             "LinkedIn Profile Link": "",
-            "Business linkedln page or Website": lines[6] if len(lines) > 6 else ""
+            "Business linkedln page or Website": lines[6] if len(lines) > 6 else "",
         }
 
     # ============================================================
-    # 📌 FORMAT 2: Media Pack enquiry
+    # 📌 FORMAT 2 – Media Pack enquiry
     # ============================================================
     if lines and "submitted enquiry for Media Pack" in lines[0]:
         name_parts = lines[1].split()
@@ -90,16 +89,16 @@ def parse_details(body):
             "Which event are you interested in": lines[4] if len(lines) > 4 else "",
             "Mobile Number": lines[5] if len(lines) > 5 else "",
             "LinkedIn Profile Link": "",
-            "Business linkedln page or Website": ""
+            "Business linkedln page or Website": "",
         }
 
     # ============================================================
-    # 📌 FORMAT 1: Normal booking enquiry
+    # 📌 FORMAT 1 – Normal booking enquiry
     # ============================================================
     if lines and "would like to book a stand" in lines[0].lower():
         lines = lines[1:]
 
-    first_name, last_name = ("", "")
+    first_name, last_name = "", ""
     if len(lines) >= 1:
         name_parts = lines[0].split()
         first_name = name_parts[0]
@@ -113,7 +112,7 @@ def parse_details(body):
         "Which event are you interested in": lines[3] if len(lines) > 3 else "",
         "Mobile Number": lines[4] if len(lines) > 4 else "",
         "LinkedIn Profile Link": "",
-        "Business linkedln page or Website": ""
+        "Business linkedln page or Website": "",
     }
 
 # ----------------- DUPLICATE CHECK -----------------
@@ -181,19 +180,19 @@ def process_emails(leads):
             print(f"⏩ Duplicate skipped: {email_value}")
             continue
 
+        # Build exact row for 34 columns
         row = [
-            datetime.now().strftime("%Y-%m-%d"),   # Lead Date
-            "Businessrevivalseries",               # Lead Source
-            details["First Name"],                 # First_Name
-            details["Last Name"],                  # Last Name
-            details["Business Name"],              # Company Name
-            details["Mobile Number"],              # Mobile
-            email_value,                           # Email
-            details["Which event are you interested in"], # Show
-            "", "", "", "", "", "",                
-            "Exhibitors_opportunity",              # Interested for
-            "",                                    # Follow-Up Count
-            "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+            datetime.now().strftime("%Y-%m-%d"),     # Lead Date
+            "Businessrevivalseries",                 # Lead Source
+            details["First Name"],                   # First_Name
+            details["Last Name"],                    # Last Name
+            details["Business Name"],                # Company Name
+            details["Mobile Number"],                # Mobile
+            email_value,                             # Email
+            details["Which event are you interested in"],  # Show
+            "", "", "", "", "", "",                  # Next Followup → Pitch deck URL
+            "Exhibitors_opportunity",               # Interested for
+            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
         ]
 
         new_rows.append(row)
