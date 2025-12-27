@@ -180,19 +180,46 @@ def process_emails(leads):
             print(f"⏩ Duplicate skipped: {email_value}")
             continue
 
-        # Build exact row for 34 columns
+        # ✅ EXACTLY 34 columns (A → AH)
         row = [
-            datetime.now().strftime("%Y-%m-%d"),     # Lead Date
-            "Businessrevivalseries",                 # Lead Source
-            details["First Name"],                   # First_Name
-            details["Last Name"],                    # Last Name
-            details["Business Name"],                # Company Name
-            details["Mobile Number"],                # Mobile
-            email_value,                             # Email
-            details["Which event are you interested in"],  # Show
-            "", "", "", "", "", "",                  # Next Followup → Pitch deck URL
-            "Exhibitors_opportunity",               # Interested for
-            "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
+            datetime.now().strftime("%Y-%m-%d"),     # A Lead Date
+            "Businessrevivalseries",                 # B Lead Source
+            details.get("First Name", ""),           # C First_Name
+            details.get("Last Name", ""),            # D Last Name
+            details.get("Business Name", ""),        # E Company Name
+            details.get("Mobile Number", ""),        # F Mobile
+            email_value,                             # G Email
+            details.get("Which event are you interested in", ""),  # H Show
+
+            "",  # I Next Followup
+            "",  # J Email-Count
+            "",  # K Call Attempt
+            "",  # L Linkedin Msg
+            "",  # M WhatsApp msg count
+            "",  # N Comments
+            "",  # O Pitch Deck URL
+
+            "Exhibitors_opportunity",  # P Interested for
+
+            "",  # Q Follow-Up Count
+            "",  # R Last Follow-Up Date
+            "",  # S Reply Status
+
+            "",  # T LINKEDIN-HEADLINE
+            "",  # U LINKEDIN-REPLY
+            "",  # V LINKEDIN-URL
+            "",  # W Stand Size
+            "",  # X Amount
+            "",  # Y CRM Update
+            "",  # Z CRM Lead ID
+            "",  # AA Eventbrite Update
+            "",  # AB Exhibitor MIS
+            "",  # AC Welcome Email
+            "",  # AD Welcome Msg
+            "",  # AE Canva Update
+            "",  # AF Website Update
+            "",  # AG Social Media Post
+            ""   # AH Payment Status
         ]
 
         new_rows.append(row)
