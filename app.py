@@ -227,7 +227,7 @@ def process_emails(leads):
 
     if new_rows:
         for row in reversed(new_rows):
-            sheet.insert_row(row, 2, value_input_option="USER_ENTERED")
+            sheet.insert_row(row, 2, value_input_option="USER_ENTERED", inherit_from_before=False)
         print(f"✅ Added {len(new_rows)} new leads")
     else:
         print("ℹ️ No new leads to add")
