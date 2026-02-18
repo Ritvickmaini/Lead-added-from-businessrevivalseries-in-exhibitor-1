@@ -118,7 +118,7 @@ def parse_details(body):
 # ----------------- DUPLICATE CHECK -----------------
 def get_existing_emails():
     try:
-        all_emails = sheet.col_values(7)  # Email column
+        all_emails = sheet.col_values(8)  # Email column
         return set([e.lower().strip() for e in all_emails if e])
     except Exception as e:
         print(f"❌ Error fetching existing emails: {e}")
@@ -182,6 +182,7 @@ def process_emails(leads):
 
         # ✅ EXACTLY 34 columns (A → AH)
         row = [
+            "",
             datetime.now().strftime("%Y-%m-%d"),     # A Lead Date
             "Businessrevivalseries",                 # B Lead Source
             details.get("First Name", ""),           # C First_Name
